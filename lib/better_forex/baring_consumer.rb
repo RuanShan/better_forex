@@ -33,11 +33,18 @@ module BetterForex
 
           http.stream { |chunk|
             if chunk =~ /\[.*\]/
-              data = eval($&)
-              exchanges.push_message( data )
+              data = eval(parse_message( $& ))
+              exchanges.push_message( data, Time.now )
             end
           }
         end
+
+      end
+
+      # [[1,-1],[2,-3,,,,-1],[3],[8,4],[10,-1],]
+      # [[4],[7,1],[8,-1],[10,2],]
+      def parse_message( s )
+        s.gsub(/(?<=,),/, "0,")
       end
     end
   end
